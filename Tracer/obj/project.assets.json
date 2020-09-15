@@ -1,30 +1,11 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.1": {
-      "Tracer/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v3.1",
-        "compile": {
-          "bin/placeholder/Tracer.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Tracer.dll": {}
-        }
-      }
-    }
+    ".NETCoreApp,Version=v3.1": {}
   },
-  "libraries": {
-    "Tracer/1.0.0": {
-      "type": "project",
-      "path": "../Tracer/Tracer.csproj",
-      "msbuildProject": "../Tracer/Tracer.csproj"
-    }
-  },
+  "libraries": {},
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.1": [
-      "Tracer >= 1.0.0"
-    ]
+    ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
     "C:\\Users\\trolo\\.nuget\\packages\\": {},
@@ -33,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\CCP_Lab_1_Tracer\\CCP_Lab_1_Tracer.csproj",
-      "projectName": "CCP_Lab_1_Tracer",
-      "projectPath": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\CCP_Lab_1_Tracer\\CCP_Lab_1_Tracer.csproj",
+      "projectUniqueName": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\Tracer\\Tracer.csproj",
+      "projectName": "Tracer",
+      "projectPath": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\Tracer\\Tracer.csproj",
       "packagesPath": "C:\\Users\\trolo\\.nuget\\packages\\",
-      "outputPath": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\CCP_Lab_1_Tracer\\obj\\",
+      "outputPath": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\Tracer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -56,11 +37,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "projectReferences": {
-            "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\Tracer\\Tracer.csproj": {
-              "projectPath": "D:\\Bsuir\\SPP\\CCP_Lab_1_Tracer\\Tracer\\Tracer.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {
