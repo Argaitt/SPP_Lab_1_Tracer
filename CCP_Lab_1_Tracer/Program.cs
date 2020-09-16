@@ -9,18 +9,53 @@ namespace CCP_Lab_1_Tracer
     
     class Program
     {
+        
         static void Main(string[] args)
         {
+            Tracer.Tracer tracer = new Tracer.Tracer();
+            Foo foo = new Foo(tracer);
+            foo.MyMethod();
+            tracer.StartTrace();
+            Thread.Sleep(300);
+            tracer.StopTrace();
+        }
+        
+    }
+    public class Foo
+    {
+        private Bar _bar;
+        private ITracer _tracer;
+
+        internal Foo(ITracer tracer)
+        {
+            _tracer = tracer;
+            _bar = new Bar(_tracer);
+        }
+
+        public void MyMethod()
+        {
+            _tracer.StartTrace();
+           
+            _bar.InnerMethod();
             
-            Tracer.Tracer tracer1 = new Tracer.Tracer();
-            tracer1.StartTrace();
-            Thread.Sleep(50);
-            tracer1.StopTrace();
-            tracer1.StartTrace();
-            Thread.Sleep(100);
-            tracer1.StopTrace();
-            ConcurrentDictionary<int, TraceResult> arr = new ConcurrentDictionary<int, TraceResult>();
-            arr = tracer1.GetTraceResult();
+            _tracer.StopTrace();
+        }
+    }
+
+    public class Bar
+    {
+        private ITracer _tracer;
+
+        internal Bar(ITracer tracer)
+        {
+            _tracer = tracer;
+        }
+
+        public void InnerMethod()
+        {
+            _tracer.StartTrace();
+           
+            _tracer.StopTrace();
         }
     }
 }

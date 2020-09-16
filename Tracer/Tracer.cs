@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Tracer
 {
+    public struct ThreadResult
+    {
+        public long time;
+
+        public int id;
+
+        public List<TraceResult> traceResultList;
+
+    }
     public struct TraceResult
     {
         public long time;
@@ -13,55 +25,65 @@ namespace Tracer
         public string methodName;
 
         public string className;
+
+        public List<TraceResult> traceResultList;
+        
     }
-    interface ITracer 
+    public interface ITracer 
     { 
 
         void StartTrace();
 
         void StopTrace();
 
-        ConcurrentDictionary<int, TraceResult> GetTraceResult();
-
     }
 
     public class Tracer:ITracer
     {
-        Stopwatch stopwatch;
+        
+
+        Stack<TraceResult> stackTraceResult;
+
+        List<ThreadResult> threadResultsArr;
+
         public Tracer() 
         {
-            stopwatch = new Stopwatch();
-            traceResultsList = new ConcurrentDictionary<int, TraceResult>();
-            key = 0;
+            stackTraceResult = new Stack<TraceResult>();
+            threadResultsArr = new List<ThreadResult>();
         }
 
-        ConcurrentDictionary<int, TraceResult> traceResultsList;
-        int key;
         public void StartTrace()
         {
-            stopwatch.Start();
-            
-        }
-        public void StopTrace()
-        {
-            stopwatch.Stop();
             TraceResult traceResult;
-            traceResult.time = stopwatch.ElapsedMilliseconds;
-            // получаем имя метода в контекте которого вызван StopTrace()
             StackTrace stackTrace = new StackTrace();
-            StackFrame frame = stackTrace.GetFrames()[1];
+            StackFrame frame = stackTrace.GetFrame(1);
             MethodBase method = frame.GetMethod();
             Type type = method.DeclaringType;
             traceResult.methodName = method.Name;
             traceResult.className = type.Name;
-            traceResultsList.TryAdd(key, traceResult);
-            key++;
-            
+            traceResult.time = DateTime.Now.Second;
+            traceResult.traceResultList = new List<TraceResult>();
+            stackTraceResult.Push(traceResult);
         }
-        
-        public ConcurrentDictionary<int, TraceResult> GetTraceResult()
+        public void StopTrace()
         {
-            return traceResultsList;
+            int time = DateTime.Now.Second;
+            TraceResult traceResult = stackTraceResult.Pop();
+            traceResult.time = time - traceResult.time;
+            if (stackTraceResult.Count != 0)
+            {
+                stackTraceResult.Peek().traceResultList.Add(traceResult);
+            }
+            else 
+            {
+                ThreadResult threadResult;
+                threadResult.id = threadResultsArr.Count + 1;
+                threadResult.time = traceResult.time;
+                threadResult.traceResultList = new List<TraceResult>();
+                threadResult.traceResultList.Add(traceResult);
+                threadResultsArr.Add(threadResult);
+            }
+            
         }
     }
 }
