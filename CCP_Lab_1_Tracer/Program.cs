@@ -51,7 +51,7 @@ namespace CCP_Lab_1_Tracer
         public void InnerMethod()
         {
             _tracer.StartTrace();
-           
+            Thread.Sleep(50);
             _tracer.StopTrace();
         }
     }
