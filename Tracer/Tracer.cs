@@ -6,18 +6,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Tracer
 {
-    public struct ThreadResult
-    {
-        public long time;
-
-        public int id;
-
-        public List<TraceResult> traceResultList;
-
-    }
+    
     public struct TraceResult
     {
         public long time;
@@ -41,20 +34,17 @@ namespace Tracer
     public class Tracer:ITracer
     {
         
-
-        Stack<TraceResult> stackTraceResult;
-
-        List<ThreadResult> threadResultsArr;
+        ConcurrentDictionary<int, Stack<TraceResult>> threadsResults;
 
         public Tracer() 
         {
-            stackTraceResult = new Stack<TraceResult>();
-            threadResultsArr = new List<ThreadResult>();
+            
         }
 
         public void StartTrace()
         {
             TraceResult traceResult;
+            Stack<TraceResult> stackTraceResults = new Stack<TraceResult>();
             StackTrace stackTrace = new StackTrace();
             StackFrame frame = stackTrace.GetFrame(1);
             MethodBase method = frame.GetMethod();
@@ -63,27 +53,20 @@ namespace Tracer
             traceResult.className = type.Name;
             traceResult.time = DateTime.Now.Second;
             traceResult.traceResultList = new List<TraceResult>();
-            stackTraceResult.Push(traceResult);
+            threadsResults.GetOrAdd(Thread.CurrentThread.ManagedThreadId, _ => new Stack<TraceResult>());
+            threadsResults.TryGetValue(Thread.CurrentThread.ManagedThreadId, out stackTraceResults);
+            stackTraceResults.Push(traceResult);
+            threadsResults.TryAdd(Thread.CurrentThread.ManagedThreadId, stackTraceResults);
         }
         public void StopTrace()
         {
             int time = DateTime.Now.Second;
+            Stack<TraceResult> stackTraceResult = new Stack<TraceResult>();
+            threadsResults.TryGetValue(Thread.CurrentThread.ManagedThreadId, out stackTraceResult);
             TraceResult traceResult = stackTraceResult.Pop();
             traceResult.time = time - traceResult.time;
-            if (stackTraceResult.Count != 0)
-            {
-                stackTraceResult.Peek().traceResultList.Add(traceResult);
-            }
-            else 
-            {
-                ThreadResult threadResult;
-                threadResult.id = threadResultsArr.Count + 1;
-                threadResult.time = traceResult.time;
-                threadResult.traceResultList = new List<TraceResult>();
-                threadResult.traceResultList.Add(traceResult);
-                threadResultsArr.Add(threadResult);
-            }
-            
+            stackTraceResult.Peek().traceResultList.Add(traceResult); 
+
         }
     }
 }

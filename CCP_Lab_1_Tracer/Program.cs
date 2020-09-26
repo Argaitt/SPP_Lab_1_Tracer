@@ -15,9 +15,6 @@ namespace CCP_Lab_1_Tracer
             Tracer.Tracer tracer = new Tracer.Tracer();
             Foo foo = new Foo(tracer);
             foo.MyMethod();
-            tracer.StartTrace();
-            Thread.Sleep(300);
-            tracer.StopTrace();
         }
         
     }
