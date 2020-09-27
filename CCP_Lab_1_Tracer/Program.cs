@@ -16,13 +16,13 @@ namespace CCP_Lab_1_Tracer
             Tracer.Tracer tracer = new Tracer.Tracer();
             Foo foo = new Foo(tracer);
             Bar bar = new Bar(tracer);
-            //Thread myThread = new Thread(new ThreadStart(bar.InnerMethodForSecondThread));
-            //myThread.Start(); // запускаем поток
+            Thread myThread = new Thread(new ThreadStart(bar.InnerMethodForSecondThread));
+            myThread.Start(); // запускаем поток
             foo.MyMethod();
             bar.InnerMethod();
             bar.InnerMethod1();
             bar.InnerMethod2();
-
+            tracer.GetTraceResult();
         }
         
     }

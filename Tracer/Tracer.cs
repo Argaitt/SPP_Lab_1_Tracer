@@ -27,6 +27,8 @@ namespace Tracer
 
         void StopTrace();
 
+        void GetTraceResult();
+
     }
 
     public class Tracer:ITracer
@@ -70,11 +72,10 @@ namespace Tracer
                 stopwatch1.Start();
                 root.stopwatch = stopwatch1;
                 //инициализация предложенная вижлой, ей виднее, в дебаггере криминала не видно
-                root.traceResultList = new List<TraceResult>
-                {
-                    traceResult
-                };
+                root.traceResultList = new List<TraceResult>();
+
                 stackTraceResult.Push(root);
+                stackTraceResult.Push(traceResult);
             }
             else
             {
@@ -91,11 +92,14 @@ namespace Tracer
             Stopwatch stopwatch = traceResult.stopwatch;
             stopwatch.Stop();
             traceResult.time = stopwatch.ElapsedMilliseconds;
-            stackTraceResult.Peek().traceResultList.Add(traceResult);
+            stackTraceResult.Peek().traceResultList.Add(traceResult); 
             threadsResults.TryAdd(Thread.CurrentThread.ManagedThreadId, stackTraceResult);
-            //Console.WriteLine(traceResult.methodName);
-            //Console.WriteLine(traceResult.time + '\n');
-             
+            Console.WriteLine(traceResult.methodName);
+            Console.WriteLine(traceResult.time + '\n');
+        }
+        public void GetTraceResult()
+        {
+            ConcurrentDictionary<int, Stack<TraceResult>> arr = threadsResults;
         }
     }
 }
