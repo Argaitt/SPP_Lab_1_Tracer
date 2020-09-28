@@ -4,20 +4,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Text.Json;
+using System.Xml.Serialization;
+using System.IO;
+
 
 namespace Tracer
 {
 
-    public struct TraceResult
+    public class TraceResult
     {
         public Stopwatch stopwatch;
-        public long time;
 
-        public string methodName;
+        public long time { get; set; }
 
-        public string className;
+        public string methodName { get; set; }
 
-        public List<TraceResult> traceResultList;
+        public string className { get; set; }
+
+        public List<TraceResult> traceResultList {get; set;}
         
     }
     public interface ITracer 
@@ -27,7 +32,7 @@ namespace Tracer
 
         void StopTrace();
 
-        void GetTraceResult();
+        string[] GetTraceResult();
 
     }
 
@@ -43,7 +48,7 @@ namespace Tracer
 
         public void StartTrace()
         {
-            TraceResult traceResult;
+            TraceResult traceResult = new TraceResult();
             Stack<TraceResult> stackTraceResult = new Stack<TraceResult>();
             //Получаем имя метода и класс к кторому он принадлежит
             StackTrace stackTrace = new StackTrace();
@@ -64,7 +69,7 @@ namespace Tracer
             //Создаем корневую структуру, которая будет считать общее время выполнения.
             if (stackTraceResult.Count == 0)
             {
-                TraceResult root;
+                TraceResult root = new TraceResult();
                 root.methodName = Thread.CurrentThread.ManagedThreadId.ToString();
                 root.className = "Thread";
                 root.time = 0;
@@ -94,12 +99,28 @@ namespace Tracer
             traceResult.time = stopwatch.ElapsedMilliseconds;
             stackTraceResult.Peek().traceResultList.Add(traceResult); 
             threadsResults.TryAdd(Thread.CurrentThread.ManagedThreadId, stackTraceResult);
-            Console.WriteLine(traceResult.methodName);
-            Console.WriteLine(traceResult.time + '\n');
+            //Console.WriteLine(traceResult.methodName);
+            //Console.WriteLine(traceResult.time + '\n');
         }
-        public void GetTraceResult()
+        public string[] GetTraceResult()
         {
-            ConcurrentDictionary<int, Stack<TraceResult>> arr = threadsResults;
+            List<TraceResult> TRL = new List<TraceResult>();
+            foreach (KeyValuePair<int, Stack<TraceResult>> item in threadsResults)
+            {   
+                TRL.Add(item.Value.Pop());
+            }
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            string json = JsonSerializer.Serialize<List<TraceResult>>(TRL, options);
+            //Console.WriteLine(json);
+            XmlSerializer formatter = new XmlSerializer(typeof(List<TraceResult>));
+            StringWriter textWriter = new StringWriter();
+            formatter.Serialize(textWriter,TRL);
+            //Console.WriteLine(textWriter);
+            string[] result = { json, textWriter.ToString() };
+            return result;
         }
     }
 }

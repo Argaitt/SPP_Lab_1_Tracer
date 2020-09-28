@@ -3,6 +3,7 @@ using System.Threading;
 using Tracer;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace CCP_Lab_1_Tracer
 {
@@ -12,17 +13,18 @@ namespace CCP_Lab_1_Tracer
         
         static void Main(string[] args)
         {
-            
             Tracer.Tracer tracer = new Tracer.Tracer();
             Foo foo = new Foo(tracer);
             Bar bar = new Bar(tracer);
+            WriterResult wr = new WriterResult();
             Thread myThread = new Thread(new ThreadStart(bar.InnerMethodForSecondThread));
             myThread.Start(); // запускаем поток
             foo.MyMethod();
             bar.InnerMethod();
             bar.InnerMethod1();
             bar.InnerMethod2();
-            tracer.GetTraceResult();
+            //wr.JsonXmlToConsole(tracer.GetTraceResult());
+            wr.JsonXmlToFile(tracer.GetTraceResult());
         }
         
     }
@@ -86,6 +88,23 @@ namespace CCP_Lab_1_Tracer
             _tracer.StartTrace();
             Thread.Sleep(50);
             _tracer.StopTrace();
+        }
+    }
+    class WriterResult 
+    {
+        public void JsonXmlToConsole(string[] jsonAndXml)
+        {
+            foreach (var item in jsonAndXml)
+            {
+                Console.WriteLine(item);
+            }
+            
+        }
+
+        public void JsonXmlToFile(string[] jsonAndXml)
+        {
+            File.WriteAllText("result.json", jsonAndXml[0]);
+            File.WriteAllText("result.xml", jsonAndXml[1]);
         }
     }
 }
