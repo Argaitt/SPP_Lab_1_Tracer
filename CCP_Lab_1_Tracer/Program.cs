@@ -14,17 +14,22 @@ namespace CCP_Lab_1_Tracer
         static void Main(string[] args)
         {
             Tracer.Tracer tracer = new Tracer.Tracer();
-            Foo foo = new Foo(tracer);
-            Bar bar = new Bar(tracer);
-            WriterResult wr = new WriterResult();
-            Thread myThread = new Thread(new ThreadStart(bar.InnerMethodForSecondThread));
-            myThread.Start(); // запускаем поток
-            foo.MyMethod();
-            bar.InnerMethod();
-            bar.InnerMethod1();
-            bar.InnerMethod2();
+            //Foo foo = new Foo(tracer);
+            //Bar bar = new Bar(tracer);
+            //WriterResult wr = new WriterResult();
+            //Thread myThread = new Thread(new ThreadStart(bar.InnerMethodForSecondThread));
+            //myThread.Start();
+            //foo.MyMethod();
+            //bar.InnerMethod();
+            //bar.InnerMethod1();
+            //bar.InnerMethod2();
+            
+            tracer.StartTrace();
+            Thread.Sleep(100);
+            tracer.StopTrace();
+            string[] actual = tracer.GetTraceResult();
             //wr.JsonXmlToConsole(tracer.GetTraceResult());
-            wr.JsonXmlToFile(tracer.GetTraceResult());
+            //wr.JsonXmlToFile(tracer.GetTraceResult());
         }
         
     }

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Text.Json;
 using System.Xml.Serialization;
 using System.IO;
-
+using System.Linq;
 
 namespace Tracer
 {
@@ -108,6 +108,7 @@ namespace Tracer
             foreach (KeyValuePair<int, Stack<TraceResult>> item in threadsResults)
             {   
                 TRL.Add(item.Value.Pop());
+                item.Value.Push(TRL[TRL.Count - 1]); 
             }
             var options = new JsonSerializerOptions
             {
