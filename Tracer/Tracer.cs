@@ -97,7 +97,15 @@ namespace Tracer
             Stopwatch stopwatch = traceResult.stopwatch;
             stopwatch.Stop();
             traceResult.time = stopwatch.ElapsedMilliseconds;
-            stackTraceResult.Peek().traceResultList.Add(traceResult); 
+            stackTraceResult.Peek().traceResultList.Add(traceResult);
+            if (stackTraceResult.Count == 1)
+            {
+                Stopwatch stopwatch1 = stackTraceResult.Peek().stopwatch;
+                stopwatch1.Stop();
+                stackTraceResult.Peek().time = stopwatch1.ElapsedMilliseconds;
+                stopwatch1.Start();
+                stackTraceResult.Peek().stopwatch = stopwatch1;
+            }
             threadsResults.TryAdd(Thread.CurrentThread.ManagedThreadId, stackTraceResult);
             //Console.WriteLine(traceResult.methodName);
             //Console.WriteLine(traceResult.time + '\n');
